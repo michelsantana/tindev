@@ -1,34 +1,34 @@
-const Dev = require('../model/Dev');
+const Pet = require('../model/Pet');
 
 module.exports = {
    async store(req, res) {
       const {user} = req.headers;
-      const {devId} = req.params;
+      const {petId} = req.params;
 
-      const loggedDev = await Dev.findById(user);
-      const targetDev = await Dev.findById(devId);
+      const loggedPet = await Pet.findById(user);
+      const targetPet = await Pet.findById(petId);
 
-      if (!targetDev || !loggedDev) {
-         return res.status(400).json({error: 'Dev not exists'});
+      if (!targetPet || !loggedPet) {
+         return res.status(400).json({error: 'Pet not exists'});
       }
 
-      if(targetDev.likes.includes(loggedDev._id)){
+      if(targetPet.likes.includes(loggedPet._id)){
          const loggedSocket = req.connectedUsers[user];
-         const targetSocket = req.connectedUsers[devId];
+         const targetSocket = req.connectedUsers[petId];
 
          if(loggedSocket){
-            req.io.to(loggedSocket).emit('match', targetDev);
+            req.io.to(loggedSocket).emit('match', targetPet);
          }
 
          if(targetSocket){
-            req.io.to(targetSocket).emit('match', loggedDev);
+            req.io.to(targetSocket).emit('match', loggedPet);
          }
       }
 
-      loggedDev.likes.push(targetDev._id);
+      loggedPet.likes.push(targetPet._id);
 
-      await loggedDev.save();
+      await loggedPet.save();
 
-      return res.json(loggedDev);
+      return res.json(loggedPet);
    },
 };
