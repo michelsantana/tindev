@@ -1,21 +1,21 @@
-const Dev = require('../model/Dev');
+const Pet = require('../model/Pet');
 
 module.exports = {
    async store(req, res) {
       const {user} = req.headers;
-      const {devId} = req.params;
+      const {petId} = req.params;
 
-      const loggedDev = await Dev.findById(user);
-      const targetDev = await Dev.findById(devId);
+      const loggedPet = await Pet.findById(user);
+      const targetPet = await Pet.findById(petId);
 
-      if (!targetDev || !loggedDev) {
-         return res.status(400).json({error: 'Dev not exists'});
+      if (!targetPet || !loggedPet) {
+         return res.status(400).json({error: 'Pet not exists'});
       }
 
-      loggedDev.dislikes.push(targetDev._id);
+      loggedPet.dislikes.push(targetPet._id);
 
-      await loggedDev.save();
+      await loggedPet.save();
 
-      return res.json(loggedDev);
+      return res.json(loggedPet);
    },
 };
